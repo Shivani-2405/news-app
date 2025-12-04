@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shivani News App</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Poppins, sans-serif;
+  background:#0b1222;
+  color:white;
+  padding:20px;
+}
+
+h1{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.search-box{
+  display:flex;
+  gap:10px;
+  max-width:600px;
+  margin:0 auto 20px auto;
+}
+
+input{
+  flex:1;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  outline:none;
+}
+
+button{
+  padding:12px 18px;
+  background:#4aa3ff;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.categories{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+
+.cat-btn{
+  padding:10px 16px;
+  background:#1c2a44;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  color:white;
+}
+
+.cat-btn:hover{
+  background:#26406d;
+}
+
+.news-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:#131c33;
+  padding:14px;
+  border-radius:10px;
+}
+
+.card img{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.title{
+  font-size:18px;
+  font-weight:700;
+  margin:10px 0;
+}
+
+.desc{
+  font-size:14px;
+  opacity:0.8;
+}
+
+a{
+  color:#4aa3ff;
+}
+</style>
+
+</head>
+<body>
+
+<h1>📰Headline Sphere</h1>
+
+<div class="search-box">
+  <input type="text" id="search" placeholder="Search news...">
+  <button onclick="searchNews()">Search</button>
+</div>
+
+<div class="categories">
+  <button class="cat-btn" onclick="loadCategory('technology')">Technology</button>
+  <button class="cat-btn" onclick="loadCategory('india')">India</button>
+  <button class="cat-btn" onclick="loadCategory('sports')">Sports</button>
+  <button class="cat-btn" onclick="loadCategory('health')">Health</button>
+  <button class="cat-btn" onclick="loadCategory('business')">Business</button>
+</div>
+
+<div id="news" class="news-grid"></div>
+
+<script>
+const API_KEY = "c79cc860604d4a0ebde6a0cff0be09b3";
+
+async function fetchNews(query){
+  const url = `https://newsapi.org/v2/everything?q=${query}&apiKey=${API_KEY}`;
+  const res = await fetch(url);
+  const data = await res.json();
+
+  const container = document.getElementById("news");
+  container.innerHTML = "";
+
+  if(!data.articles || data.articles.length === 0){
+    container.innerHTML = "<h2>No news found 😕</h2>";
+    return;
+  }
+
+  data.articles.forEach(article => {
+    container.innerHTML += `
+      <div class="card">
+        <img src="${article.urlToImage || 'https://via.placeholder.com/300'}" />
+        <div class="title">${article.title}</div>
+        <div class="desc">${article.description || ''}</div>
+        <a href="${article.url}" target="_blank">Read more</a>
+      </div>
+    `;
+  });
+}
+
+function searchNews(){
+  let query = document.getElementById("search").value;
+  fetchNews(query);
+}
+
+function loadCategory(cat){
+  fetchNews(cat);
+}
+
+// Default load
+fetchNews("latest news");
+</script>
+
+</body>
+</html>
